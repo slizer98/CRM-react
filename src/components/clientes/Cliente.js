@@ -8,7 +8,7 @@ export default function Cliente({cliente}) {
             <p className="nombre">{nombre} {apellido}</p>
             <p className="empresa">{empresa}</p>
             <p>{email}</p>
-            <p>{telefono}</p>
+            <p>Tel: {telefono}</p>
         </div>
         <div className="acciones">
             <a href="#" className="btn btn-azul">
