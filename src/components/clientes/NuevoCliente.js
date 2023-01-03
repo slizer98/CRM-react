@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import clienteAxios from '../../config/axios';
 
-export default function NuevoCliente() {
+function NuevoCliente() {
     const [cliente, guardarCliente] = useState({
         nombre: '',
         apellido: '',
@@ -8,6 +11,7 @@ export default function NuevoCliente() {
         email: '',
         telefono: ''
     });
+    const navigate = useNavigate();
 
     // leer los datos del formulario
     const actualizarState = e => {
@@ -18,6 +22,33 @@ export default function NuevoCliente() {
             [e.target.name] : e.target.value
         })
         console.log(cliente);
+    }
+
+    //  agrega cilente en las Rest API
+    const agregarCliente = e => {
+        e.preventDefault();
+
+        // enviar peticion por axios
+        clienteAxios.post('/clientes', cliente)
+            .then(res => {
+                if(res.data.code === 11000) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hubo un error',
+                        text: 'Ese cliente ya esta registrado'
+                    })
+                } else {
+                    Swal.fire(
+                        'Se Agrego El Cliente Correctamente',
+                        res.data.message,
+                        'success'
+                      )
+                }
+                // Redireccionar
+                navigate('/');
+
+            })
+        
     }
 
     // Validar el formulario
@@ -34,7 +65,9 @@ export default function NuevoCliente() {
   return (
     <>
         <h2>Nuevo Cliente</h2>
-        <form>
+        <form
+            onSubmit={agregarCliente}
+        >
             <legend>Llena todos los campos</legend>
 
             <div className="campo">
@@ -80,7 +113,7 @@ export default function NuevoCliente() {
             <div className="campo">
                 <label>Teléfono:</label>
                 <input 
-                    type="email" 
+                    type="text" 
                     placeholder="Teléfono Cliente" 
                     name="telefono" 
                     onChange={actualizarState}
@@ -100,3 +133,6 @@ export default function NuevoCliente() {
     </>
   )
 }
+
+// HOC, Higher Order Component es una funcion que toma un componente y retorna un nuevo componente
+export default NuevoCliente;
